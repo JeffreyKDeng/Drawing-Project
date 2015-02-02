@@ -1,0 +1,68 @@
+// $Id: interp.h,v 1.10 2014-05-08 16:29:02-07 - - $
+//Jeffrey Deng jkdeng@ucsc.edu & Richi Mizuno rmizuno@ucsc.edu 
+#ifndef __INTERP_H__
+#define __INTERP_H__
+
+#include <iostream>
+#include <map>
+#include <vector>
+using namespace std;
+
+#include "debug.h"
+#include "graphics.h"
+#include "shape.h"
+
+class interpreter {
+   public:
+      typedef map <string, shape_ptr> shape_map;
+      typedef map <string, int> id_map;
+      typedef vector<string> parameters;
+      typedef parameters::const_iterator param;
+      typedef pair<param,param> range;
+      void interpret (const parameters&);
+      interpreter() {}
+      ~interpreter();
+      int count = 0;
+      int counter =0;
+      int interp_selected = 0;
+      GLfloat interp_move_by = 4;
+      rgbcolor selected_color = rgbcolor("red");
+      GLfloat thickness = 4;
+      
+   private:
+      interpreter (const interpreter&) = delete;
+      interpreter& operator= (const interpreter&) = delete;
+
+      typedef void (interpreter::*interpreterfn)
+                   (param begin, param end);
+      typedef shape_ptr (interpreter::*factoryfn)
+                        (param begin, param end);
+
+      static map<string,interpreterfn> interp_map;
+      static map<string,factoryfn> factory_map;
+      shape_map objmap;
+      id_map idmap;
+      
+
+      void do_define (param begin, param end);
+      void do_draw (param begin, param end);
+      void do_moveby (param begin, param end);
+      void do_border (param begin, param end);
+
+      shape_ptr make_shape (param begin, param end);
+      shape_ptr make_text (param begin, param end);
+      shape_ptr make_ellipse (param begin, param end);
+      shape_ptr make_circle (param begin, param end);
+      shape_ptr make_polygon (param begin, param end);
+      shape_ptr make_rectangle (param begin, param end);
+      shape_ptr make_square (param begin, param end);
+      shape_ptr make_diamond (param begin, param end);
+      shape_ptr make_line (param begin, param end);
+      shape_ptr make_triangle (param begin, param end);
+      shape_ptr make_isosceles (param begin, param end);
+      shape_ptr make_equilateral (param begin, param end);
+      shape_ptr make_right_triangle (param begin, param end);
+};
+
+#endif
+
